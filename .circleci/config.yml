@@ -31,7 +31,7 @@ jobs:
             JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
           command: |
             echo $JAVA_HOME
-            which JAVA
+            which java
             java --version
 
   test:
