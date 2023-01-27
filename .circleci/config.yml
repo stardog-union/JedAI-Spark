@@ -26,7 +26,7 @@ jobs:
             echo $JAVA_HOME
             ls -ltr /usr/bin/java
             ls -ltr /etc/alternatives/java
-            ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
+            sudo ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
             echo $PATH
             which java
       - run:
