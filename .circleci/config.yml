@@ -23,11 +23,16 @@ jobs:
             sudo apt-get install sbt
             sudo apt-get install openjdk-11-jdk
             ls /usr/lib/jvm/
+            echo $JAVA_HOME
+            which java
       - run:
           name: compile
           environment:
             JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
-          command: "java --version"
+          command: |
+            echo $JAVA_HOME
+            which JAVA
+            java --version
 
   test:
     executor: node-executor
