@@ -1,9 +1,9 @@
-version: 2
+version: 2.1
 
 executors:
   node-executor:
-    docker:
-      - image: ubuntu-2204:2022.10.2
+    machine:
+      image: ubuntu-2204:2022.10.2
 
 jobs:
   build:
