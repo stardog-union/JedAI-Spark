@@ -13,6 +13,8 @@ jobs:
       - run:
           name: checkout and install sbt
           command: |
+            sudo apt-get install openjdk-11-jdk
+            sudo ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
             sudo apt-get update
             sudo apt-get install apt-transport-https curl gnupg -yqq
             echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
@@ -21,13 +23,6 @@ jobs:
             sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
             sudo apt-get update
             sudo apt-get install sbt
-            sudo apt-get install openjdk-11-jdk
-            ls /usr/lib/jvm/
-            echo $JAVA_HOME
-            ls -ltr /usr/bin/java
-            ls -ltr /etc/alternatives/java
-            sudo ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
-            echo $PATH
             which java
       - run:
           name: compile
@@ -37,6 +32,7 @@ jobs:
             echo $JAVA_HOME
             which java
             java --version
+            sbt --version
 
   test:
     executor: node-executor
