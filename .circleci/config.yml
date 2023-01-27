@@ -1,7 +1,13 @@
 version: 2
 
+defaults: &defaults
+  docker:
+    - image: public.ecr.aws/s0j8x1j4/stardog-ci:20201208
+      user: stardog
+
 jobs:
   build:
+    <<: *defaults
     resource_class: large
     steps:
       - checkout
@@ -10,6 +16,7 @@ jobs:
           command: "sbt compile"
 
   test:
+    <<: *defaults
     resource_class: large
     steps:
       - run:
@@ -26,6 +33,7 @@ jobs:
           path: /tmp/scalatests
           destination: scalatests
   package:
+    <<: *defaults
     resource_class: large
     steps:
       - run:
