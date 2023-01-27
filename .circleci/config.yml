@@ -24,6 +24,7 @@ jobs:
             sudo apt-get install openjdk-11-jdk
             ls /usr/lib/jvm/
             echo $JAVA_HOME
+            echo $PATH
             which java
       - run:
           name: compile
