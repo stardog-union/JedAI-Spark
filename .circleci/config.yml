@@ -9,7 +9,6 @@ executors:
 jobs:
   build:
     executor: node-executor
-    resource_class: large
     steps:
       - checkout
       - run:
@@ -29,7 +28,6 @@ jobs:
 
   test:
     executor: node-executor
-    resource_class: large
     steps:
       - run:
           name: tests
@@ -46,7 +44,6 @@ jobs:
           destination: scalatests
   package:
     executor: node-executor
-    resource_class: large
     steps:
       - run:
           name: create package
