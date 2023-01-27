@@ -21,6 +21,8 @@ jobs:
             sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
             sudo apt-get update
             sudo apt-get install sbt
+            sudo apt-get install openjdk-11-jdk
+            ls /usr/lib/jvm/
       - run:
           name: compile
           command: "java --version"
