@@ -33,6 +33,7 @@ jobs:
             which java
             java --version
             sbt --version
+            sbt compile
 
   test:
     executor: node-executor
