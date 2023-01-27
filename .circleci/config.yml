@@ -23,7 +23,7 @@ jobs:
             sudo apt-get install sbt
       - run:
           name: compile
-          command: "sbt --version"
+          command: "java --version"
 
   test:
     executor: node-executor
