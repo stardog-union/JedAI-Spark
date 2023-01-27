@@ -24,13 +24,13 @@ jobs:
             sudo apt-get install openjdk-11-jdk
             ls /usr/lib/jvm/
             echo $JAVA_HOME
+            ls -ltr /usr/bin/java
             echo $PATH
             which java
       - run:
           name: compile
           environment:
             JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
-            PATH: $JAVA_HOME/bin:$PATH
           command: |
             echo $JAVA_HOME
             which java
