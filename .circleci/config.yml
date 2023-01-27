@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: circleci/openjdk
+    - image: ubuntu-2204:2022.10.2
 
 jobs:
   build:
