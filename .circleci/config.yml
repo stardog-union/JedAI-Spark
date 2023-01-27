@@ -2,8 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: public.ecr.aws/s0j8x1j4/stardog-ci:20201208
-      user: stardog
+    - image: circleci/openjdk
 
 jobs:
   build:
