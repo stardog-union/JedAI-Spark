@@ -25,6 +25,8 @@ jobs:
             ls /usr/lib/jvm/
       - run:
           name: compile
+          environment:
+            JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
           command: "java --version"
 
   test:
