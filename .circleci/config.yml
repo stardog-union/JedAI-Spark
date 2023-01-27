@@ -1,12 +1,14 @@
 version: 2
 
-defaults: &defaults
-  docker:
-    - image: ubuntu-2204:2022.10.2
+executors:
+  node-executor:
+    defaults: &defaults
+    docker:
+      - image: ubuntu-2204:2022.10.2
 
 jobs:
   build:
-    <<: *defaults
+    executor: node-executor
     resource_class: large
     steps:
       - checkout
@@ -26,7 +28,7 @@ jobs:
           command: "sbt compile"
 
   test:
-    <<: *defaults
+    executor: node-executor
     resource_class: large
     steps:
       - run:
@@ -43,7 +45,7 @@ jobs:
           path: /tmp/scalatests
           destination: scalatests
   package:
-    <<: *defaults
+    executor: node-executor
     resource_class: large
     steps:
       - run:
