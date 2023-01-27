@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   build:
-    resource_class: medium
+    resource_class: large
     steps:
       - checkout
       - run:
@@ -10,7 +10,7 @@ jobs:
           command: "sbt compile"
 
   test:
-    resource_class: medium
+    resource_class: large
     steps:
       - run:
           name: tests
@@ -26,7 +26,7 @@ jobs:
           path: /tmp/scalatests
           destination: scalatests
   package:
-    resource_class: medium
+    resource_class: large
     steps:
       - run:
           name: create package
