@@ -25,6 +25,7 @@ jobs:
             ls /usr/lib/jvm/
             echo $JAVA_HOME
             ls -ltr /usr/bin/java
+            ls -ltr /etc/alternatives/java
             echo $PATH
             which java
       - run:
