@@ -1,0 +1,46 @@
+version: 2
+
+jobs:
+  build:
+    resource_class: medium
+    steps:
+      - checkout
+      - run:
+          name: compile
+          command: "sbt compile"
+
+  test:
+    resource_class: medium
+    steps:
+      - run:
+          name: tests
+          command: "sbt test"
+      - run:
+          command: "mkdir /tmp/scalatests"
+      - run:
+          command: >
+            find target/test-reports -type f -exec cp {} /tmp/scalatests/ \;
+      - store_test_results:
+          path: /tmp/scalatests
+      - store_artifacts:
+          path: /tmp/scalatests
+          destination: scalatests
+  package:
+    resource_class: medium
+    steps:
+      - run:
+          name: create package
+          command: "sbt package"
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - package:
+          requires:
+            - test
+
