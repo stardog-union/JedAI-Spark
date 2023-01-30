@@ -53,8 +53,9 @@ jobs:
             sudo apt-get install sbt
             which java
       - run:
-          name: create assembly
-          command: "sbt assembly"
+          name: "create assembly"
+          command: |
+            sbt assembly
       - run:
           command: |
             mkdir /tmp/scalatests
