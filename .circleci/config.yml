@@ -62,15 +62,17 @@ jobs:
             mkdir /tmp/scalatests
             mkdir /tmp/artifacts
       - run:
-          command: >
+          command: |
             find target/test-reports -type f -exec cp {} /tmp/scalatests/ \;
+            cp target/scala-2.12/spark_er-assembly-1.0.jar /tmp/artifacts
       - store_test_results:
           path: /tmp/scalatests
       - store_artifacts:
           path: /tmp/scalatests
           destination: scalatests
       - store_artifacts:
-          path: /target/scala-2.12/spark_er-assembly-1.0.jar
+          path: /tmp/artifacts
+          destination: artifacts
 
 workflows:
   version: 2
