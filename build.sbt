@@ -1,4 +1,4 @@
-organization := "org.scify"
+organization := "com.stardog"
 name := "spark_er"
 version := "1.0"
 scalaVersion := "2.12.4"
