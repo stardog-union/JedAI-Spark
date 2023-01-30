@@ -63,10 +63,10 @@ workflows:
   ci:
     jobs:
       - build
-      #- test:
-      #    requires:
-      #      - build
-      #- package:
-      #    requires:
-       #     - test
+      - test:
+          requires:
+            - build
+      - package:
+          requires:
+            - test
 
