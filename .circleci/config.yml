@@ -38,6 +38,7 @@ jobs:
   package:
     executor: node-executor
     steps:
+      - checkout
       - run:
           name: checkout and install sbt
           command: |
