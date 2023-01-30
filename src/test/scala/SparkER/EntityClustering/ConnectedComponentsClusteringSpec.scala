@@ -2,8 +2,6 @@ package SparkER.EntityClustering
 
 import SparkER.DataStructures.{Profile, WeightedEdge}
 import com.holdenkarau.spark.testing.SharedSparkContext
-import org.apache.spark.rdd.RDD
-import org.scalatest._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -36,8 +34,8 @@ class ConnectedComponentsClusteringSpec extends AnyWordSpec with Matchers with S
         maxProfileID = 9,
         edgesThreshold = 0.5,
         separatorID = -1
-      ).collect.toList
-      val expected = List((0,Set(0, 6)), (1,Set(1, 4, 8)), (2,Set(2, 9, 7)), (3,Set(3)), (5,Set(5)))
+      ).collect.toSet
+      val expected = Set((0,Set(0, 6)), (1,Set(1, 4, 8)), (2,Set(2, 9, 7)), (3,Set(3)), (5,Set(5)))
       actual shouldBe expected
     }
   }
