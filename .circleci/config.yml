@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: checkout and install sbt
+          name: "Install sbt"
           command: |
             sudo apt-get install openjdk-11-jdk
             sudo ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
@@ -23,16 +23,11 @@ jobs:
             sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
             sudo apt-get update
             sudo apt-get install sbt
-            which java
       - run:
-          name: compile
+          name: "Compile"
           environment:
             JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
           command: |
-            echo $JAVA_HOME
-            which java
-            java --version
-            sbt --version
             sbt compile
 
   package:
@@ -40,7 +35,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: checkout and install sbt
+          name: "Install sbt"
           command: |
             sudo apt-get install openjdk-11-jdk
             sudo ln -sf /usr/lib/jvm/java-11-openjdk-amd64/bin/java /etc/alternatives/java
@@ -52,17 +47,15 @@ jobs:
             sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
             sudo apt-get update
             sudo apt-get install sbt
-            which java
       - run:
-          name: "create assembly"
+          name: "Create Assembly"
           command: |
             sbt assembly
       - run:
+          name: "Creating temporary directories"
           command: |
             mkdir /tmp/scalatests
             mkdir /tmp/artifacts
-      - run:
-          command: |
             find target/test-reports -type f -exec cp {} /tmp/scalatests/ \;
             cp target/scala-2.12/spark_er-assembly-1.0.jar /tmp/artifacts
       - store_test_results:
