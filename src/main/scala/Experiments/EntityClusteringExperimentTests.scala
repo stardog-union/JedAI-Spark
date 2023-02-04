@@ -75,14 +75,8 @@ object EntityClusteringExperimentTests {
     /** Now we have the candidate pairs, we can create the edges for the clustering methods */
     val edges = matches.map(x => WeightedEdge(x._1, x._2, x._3))
 
-    /** Pick up one */
-
-    //    val cc1 = ConnectedComponentsClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5)
-    //    val cc1 = CenterClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5)
-    //    val cc1 = MergeCenterClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5)
+    /** Pick one algorithm (Same as EntityClusteringTests) */
     val cc1 = MarkovClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5, separatorID = -1)
-    //    val cc1 = RicochetSRClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5, separatorID = -1)
-    //    val cc1 = CutClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5, separatorID = -1)
 
     val endTime = Calendar.getInstance().getTimeInMillis
     /** Loads the groundtruth */
