@@ -72,10 +72,7 @@ pipeline {
         stage('Publish jars and zip internally') {
             steps {
                 script {
-//                     if (params.ARTIFACT_TAG == "nightly-develop-jedai-snapshot") {
-                        // the nightly-develop-snapshot tag was specified so first delete the old one
                     sh "./ops/jenkins/delete-nightly-snapshot.sh"
-//                     }
                     sh "./ops/jenkins/publish_artifact.sh"
                 }
             }

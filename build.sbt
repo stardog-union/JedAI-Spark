@@ -51,8 +51,8 @@ assembly / assemblyMergeStrategy := {
 }
 val artifactoryUrl = "https://stardog.jfrog.io/stardog/stardog-testing/nightly-develop-jedai-snapshot/MAVEN"
 
-val artifactoryUser = sys.env("artifactoryUsername")
-val artifactoryPassword = sys.env("artifactoryPassword")
+val artifactoryUser = sys.env.getOrElse("artifactoryUsername", "undefined")
+val artifactoryPassword = sys.env.getOrElse("artifactoryPassword", "undefined")
 
 publishTo := Some("Artifactory Realm" at artifactoryUrl)
 credentials += Credentials("Artifactory Realm", artifactoryUrl, artifactoryUser, artifactoryPassword)
