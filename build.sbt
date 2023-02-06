@@ -49,3 +49,10 @@ assembly / assemblyMergeStrategy := {
 	case PathList("META-INF", xs@_*) => MergeStrategy.discard
 	case x => MergeStrategy.first
 }
+val artifactoryUrl = "https://stardog.jfrog.io/stardog/stardog-testing/nightly-develop-jedai-snapshot/MAVEN"
+
+val artifactoryUser = sys.env("artifactoryUsername")
+val artifactoryPassword = sys.env("artifactoryPassword")
+
+publishTo := Some("Artifactory Realm" at artifactoryUrl)
+credentials += Credentials("Artifactory Realm", artifactoryUrl, artifactoryUser, artifactoryPassword)
