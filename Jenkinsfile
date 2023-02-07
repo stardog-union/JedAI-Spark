@@ -5,10 +5,6 @@ node {
     group_id = sh(returnStdout: true, script: 'id -g').trim()
 }
 
-def setupScalaBuildTool() {
-    sh "./ops/jenkins/pre-build.sh"
-}
-
 pipeline {
     agent {
         dockerfile {
@@ -56,7 +52,6 @@ pipeline {
                 script {
                     env.ARTIFACT_TAG = params.ARTIFACT_TAG.toLowerCase()
                     setJavaVersion(params.JAVA_VERSION)
-                    setupScalaBuildTool()
                 }
             }
         }
