@@ -54,5 +54,6 @@ val artifactoryUrl = "https://stardog.jfrog.io/stardog/stardog-testing/nightly-d
 val artifactoryUser = sys.env.getOrElse("artifactoryUsername", "undefined")
 val artifactoryPassword = sys.env.getOrElse("artifactoryPassword", "undefined")
 
+credentials += Credentials("Artifactory Realm", "stardog.jfrog.io", artifactoryUser, artifactoryPassword)
 publishTo := Some("Artifactory Realm" at artifactoryUrl)
-credentials += Credentials("Artifactory Realm", artifactoryUrl, artifactoryUser, artifactoryPassword)
+
