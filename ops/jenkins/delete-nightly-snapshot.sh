@@ -5,4 +5,4 @@ jfrog rt del --url "https://stardog.jfrog.io/stardog" \
              --user ${artifactoryUsername} \
              --password ${artifactoryPassword}  \
              --quiet=true \
-             --spec=delete.spec || true
+             --spec=./ops/jenkins/delete.spec || true

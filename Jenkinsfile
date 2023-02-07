@@ -14,8 +14,6 @@ pipeline {
         }
     }
     parameters {
-        choice(name: 'JAVA_VERSION', defaultValue: 'JAVA11', description: 'The Java version to use for the build.')
-        choice(name: 'RELEASE_TYPE', choices: '\nTEST\nSNAPSHOT\nPRIVATE\nPUBLIC', description: 'Type of release: public, private, snapshot, or test. Required parameter only if this is going to be used as a release build.')
         booleanParam(name: 'CREATE_RELEASE_ZIP', defaultValue: false, description: 'Create the release zip from the dist directory')
         string(name: 'AWS_INSTANCE_TYPE', defaultValue: 'm4.xlarge', description: 'AWS instance type for the databricks, chaos, or release tests (m4.4xlarge or larger is recommended if dataset is >1m)')
         string(name: 'AWS_INSTANCE_CIDR', defaultValue: '127.0.0.1/32', description: 'The CIDR that will have access to Stardog running on 5820 in the environment for databricks, chaos, or release tests (if applicable)')
@@ -51,7 +49,7 @@ pipeline {
             steps {
                 script {
                     env.ARTIFACT_TAG = params.ARTIFACT_TAG.toLowerCase()
-                    setJavaVersion(params.JAVA_VERSION)
+                    setJavaVersion()
                 }
             }
         }
@@ -67,8 +65,9 @@ pipeline {
         stage('Publish jars and zip internally') {
             steps {
                 script {
+                    sh "sudo chmod -R 755 ./ops"
                     sh "./ops/jenkins/delete-nightly-snapshot.sh"
-                    sh "./ops/jenkins/publish_artifact.sh"
+                    sh "./ops/jenkins/publish_artifacts.sh"
                 }
             }
         }
@@ -92,20 +91,10 @@ pipeline {
     }
 }
 
-def setJavaVersion(String javaVersion) {
-    echo "Setting Java version to " + javaVersion
-    if (javaVersion == "JAVA11") {
-        env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64/"
-        sh "sudo update-java-alternatives --set java-1.11.0-openjdk-amd64"
-    }
-    else if (javaVersion == "JAVA8") {
-        env.JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/"
-        sh "sudo update-java-alternatives --set java-1.8.0-openjdk-amd64"
-    }
-    else {
-        currentBuild.result = 'FAILURE'
-        error("Unknown Java version " + javaVersion)
-    }
+def setJavaVersion() {
+    echo "Setting Java version to Java 11"
+    env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64/"
+    sh "sudo update-java-alternatives --set java-1.11.0-openjdk-amd64"
     printJavaVersion()
 }
 

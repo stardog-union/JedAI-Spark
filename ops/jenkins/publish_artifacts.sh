@@ -3,7 +3,7 @@
 set -eu
 sbt clean compile package publish
 
-BUILD_JAR_FULL_PATH=$(pwd)/$(ls target/scala-2.12/*.jar | head -n 1)
+BUILD_JAR_FULL_PATH=$(pwd)/$(ls target/scala-2.12/*assembly*.jar | head -n 1)
 BASE_JAR_NAME=$(basename ${BUILD_JAR_FULL_PATH})
 JAR_URL=https://stardog.jfrog.io/stardog/stardog-testing/nightly-develop-jedai-snapshot/binaries/complexible/stardog/${BASE_JAR_NAME}
 
