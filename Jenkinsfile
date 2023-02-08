@@ -14,9 +14,6 @@ pipeline {
         }
     }
     parameters {
-        booleanParam(name: 'CREATE_RELEASE_ZIP', defaultValue: false, description: 'Create the release zip from the dist directory')
-        string(name: 'AWS_INSTANCE_TYPE', defaultValue: 'm4.xlarge', description: 'AWS instance type for the databricks, chaos, or release tests (m4.4xlarge or larger is recommended if dataset is >1m)')
-        string(name: 'AWS_INSTANCE_CIDR', defaultValue: '127.0.0.1/32', description: 'The CIDR that will have access to Stardog running on 5820 in the environment for databricks, chaos, or release tests (if applicable)')
         string(name: 'ARTIFACT_TAG', defaultValue: '', description: 'The tag used to stage artifacts (requires creating release zip and will push artifacts to artifactory, docker, etc.)')
         string(name: 'SLACK', defaultValue: '', description: 'The slack channel to notify of the builds results.  This is typically #notifications-eng-gh.')
     }
@@ -28,7 +25,6 @@ pipeline {
         jenkinsOsxPriv = credentials('jenkins.osx.priv')
         artifactoryUsername = credentials('artifactoryUsername')
         artifactoryPassword = credentials('artifactoryPassword')
-
 
         LANG = 'C.UTF-8'
         S3_LOCAL_HOSTNAME = "s3${env.BUILD_ID}${UUID.randomUUID().toString().replace("-", "")}"
