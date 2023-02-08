@@ -81,11 +81,4 @@ def setJavaVersion() {
     echo "Setting Java version to Java 11"
     env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64/"
     sh "sudo update-java-alternatives --set java-1.11.0-openjdk-amd64"
-    printJavaVersion()
-}
-
-def printJavaVersion() {
-    echo "Checking Java version"
-    echo "JAVA_HOME=${env.JAVA_HOME}"
-    sh "java -version"
 }
