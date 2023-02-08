@@ -4,7 +4,7 @@ ARG USER_ID=1001
 ARG GROUP_ID=1001
 
 ENV DEFAULT_JAVA_VER 11
-ENV JAVA_HOME /usr/lib/jvm/java-${DEFAULT_JAVA_VER}-openjdk-arm64/
+ENV JAVA_HOME /usr/lib/jvm/java-${DEFAULT_JAVA_VER}-openjdk-amd64/
 ENV DEBIAN_FRONTEND noninteractive
 # ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -17,7 +17,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get -qq update && \
     apt-get install -y software-properties-common && \
-    add-apt-repository ppa:openjdk-r/ppa && \
     add-apt-repository ppa:ts.sch.gr/ppa && \
     apt-get -qq -y install curl
 
@@ -26,12 +25,9 @@ RUN apt-get -qq update && \
     apt-get -y install \
     docker-compose \
     sudo \
-    python2.7 \
-    python3-pip \
     openjdk-8-jdk \
     openjdk-11-jdk \
     vim \
-    python3-virtualenv \
     build-essential \
     maven \
     cmake \
@@ -58,11 +54,6 @@ RUN sudo apt-get update && \
     sudo apt-get update && \
     sudo apt-get install sbt
 
-# RUN locale-gen en_US.UTF-8 && \
-#     echo 'LANG="en_US.UTF-8"' > /etc/default/locale
-
-RUN pip3 install awscli --upgrade
-
 RUN curl -fL https://getcli.jfrog.io | sh
 RUN mv jfrog /usr/local/bin/jfrog
 
@@ -78,7 +69,9 @@ RUN useradd stardog --shell /bin/bash --create-home
 RUN file="$(ls -1 /usr/lib/jvm/)" && echo $file
 RUN echo $(ls -1 /usr/lib/jvm/)
 
-RUN ln -sf /usr/lib/jvm/java-11-openjdk-arm64/bin/java /etc/alternatives/java
+RUN update-java-alternatives --set java-1.11.0-openjdk-amd64
+RUN ln -s ${JAVA_HOME} /usr/lib/jvm/default-java
+
 
 RUN update-ca-certificates
 

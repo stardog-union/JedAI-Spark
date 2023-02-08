@@ -28,17 +28,7 @@ pipeline {
         jenkinsOsxPriv = credentials('jenkins.osx.priv')
         artifactoryUsername = credentials('artifactoryUsername')
         artifactoryPassword = credentials('artifactoryPassword')
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        STARDOG_GH_CREDS = credentials('stardog-ops-github-jenkins')
-        STARDOG_LICENSE = credentials('stardog_license_base64')
-        TF_VAR_artifactory_url = 'http://stardog.jfrog.io/stardog/stardog-releases-local'
-        TF_VAR_snapshot_url = 'http://stardog.jfrog.io/stardog/stardog-snapshots-local'
-        TF_VAR_artifactory_username = credentials('artifactoryUsername')
-        TF_VAR_artifactory_password = credentials('artifactoryPassword')
-        STARDOG_GITHUB_API_TOKEN = credentials('stardog-github-api-token')
 
-        artifactoryUsernameRO = credentials('artifactory-ci-readonly')
 
         LANG = 'C.UTF-8'
         S3_LOCAL_HOSTNAME = "s3${env.BUILD_ID}${UUID.randomUUID().toString().replace("-", "")}"
