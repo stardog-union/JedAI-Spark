@@ -27,28 +27,16 @@ pipeline {
         artifactoryPassword = credentials('artifactoryPassword')
 
         LANG = 'C.UTF-8'
-        S3_LOCAL_HOSTNAME = "s3${env.BUILD_ID}${UUID.randomUUID().toString().replace("-", "")}"
-        RHEL_CREDS = credentials('RHEL')
     }
     stages {
-        stage('Setup env') {
-            steps {
-                script {
-                    env.ARTIFACT_TAG = params.ARTIFACT_TAG.toLowerCase()
-                    setJavaVersion()
-                }
-            }
-        }
         stage('Build') {
             steps {
                 script {
-                    // The default Java version in the image is 11, which should be used to build
-                    printJavaVersion()
                     sh "sbt assembly"
                 }
             }
         }
-        stage('Publish jars and zip internally') {
+        stage('Publish jars and zip to Jfrog maven repo') {
             steps {
                 script {
                     sh "sudo chmod -R 755 ./ops"
@@ -75,10 +63,4 @@ pipeline {
             }
         }
     }
-}
-
-def setJavaVersion() {
-    echo "Setting Java version to Java 11"
-    env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64/"
-    sh "sudo update-java-alternatives --set java-1.11.0-openjdk-amd64"
 }

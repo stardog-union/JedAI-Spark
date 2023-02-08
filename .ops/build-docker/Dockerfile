@@ -6,26 +6,20 @@ ARG GROUP_ID=1001
 ENV DEFAULT_JAVA_VER 11
 ENV JAVA_HOME /usr/lib/jvm/java-${DEFAULT_JAVA_VER}-openjdk-amd64/
 ENV DEBIAN_FRONTEND noninteractive
-# ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
-ENV JDK_JAVA_OPTIONS "-Xmx512m -Xms512m -XX:MaxDirectMemorySize=700m -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4"
+
 
 # tzdata ENVs required for installing software-properties-common
 ENV TZ=US/Eastern
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get -qq update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:ts.sch.gr/ppa && \
-    apt-get -qq -y install curl
-
-
-RUN apt-get -qq update && \
     apt-get -y install \
+    curl \
     docker-compose \
     sudo \
-    openjdk-8-jdk \
+    ca-certificates \
     openjdk-11-jdk \
     vim \
     build-essential \
@@ -34,15 +28,13 @@ RUN apt-get -qq update && \
     git \
     openssh-client \
     docker.io \
-    curl \
     dnsutils \
     wget \
     telnet \
     groff \
     lcov \
     bash-completion \
-    mingw-w64-x86-64-dev \
-    ca-certificates && \
+    mingw-w64-x86-64-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN sudo apt-get update && \
@@ -65,9 +57,6 @@ RUN groupadd --gid ${GROUP_ID} jenkins \
 RUN chown -R jenkins:jenkins /usr/local/bin/
 
 RUN useradd stardog --shell /bin/bash --create-home
-
-RUN file="$(ls -1 /usr/lib/jvm/)" && echo $file
-RUN echo $(ls -1 /usr/lib/jvm/)
 
 RUN update-java-alternatives --set java-1.11.0-openjdk-amd64
 RUN ln -s ${JAVA_HOME} /usr/lib/jvm/default-java
