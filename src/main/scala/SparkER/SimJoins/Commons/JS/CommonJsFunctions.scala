@@ -18,7 +18,7 @@ object CommonJsFunctions {
   }
 
 
-  def prepareData(profiles: RDD[Profile], fields: List[String] = List.empty[String]): RDD[(Int, Array[Int])] = {
+  def prepareData(profiles: RDD[Profile], fields: List[String] = List.empty[String]): RDD[(Int, Array[Int], String)] = {
     val docs = profiles.map { p =>
       val data = {
         if (fields.isEmpty) {
@@ -29,13 +29,13 @@ object CommonJsFunctions {
         }
       }
 
-      (p.id, data)
+      (p.id, data, p.originalID)
     }
     tokenizeAndSort(docs)
   }
 
-  def tokenizeAndSort(documents: RDD[(Int, String)]): RDD[(Int, Array[Int])] = {
-    val tokenizedDocuments = documents.map { case (documentId, valueString) => (documentId, tokenize(valueString)) }
+  def tokenizeAndSort(documents: RDD[(Int, String, String)]): RDD[(Int, Array[Int], String)] = {
+    val tokenizedDocuments = documents.map { case (documentId, valueString, documentOriginalId) => (documentId, tokenize(valueString), documentOriginalId) }
     val tekenCount = computeTokenCount(tokenizedDocuments)
     val sc = documents.context
     val tekenCount_broadcast: Broadcast[scala.collection.Map[String, (Double, Int)]] = sc.broadcast(tekenCount.collectAsMap())
@@ -48,7 +48,7 @@ object CommonJsFunctions {
     * @param tokenizedDocuments
     * @return (token, (tokenCount, tokenId))
     */
-  def computeTokenCount(tokenizedDocuments: RDD[(Int, Set[String])]): RDD[(String, (Double, Int))] = {
+  def computeTokenCount(tokenizedDocuments: RDD[(Int, Set[String], String)]): RDD[(String, (Double, Int))] = {
     def create(e: Double): Double = e
 
     def add(acc: Double, e: Double): Double = acc + e
@@ -57,7 +57,7 @@ object CommonJsFunctions {
 
     //    tokenizedDocs.flatMap(d => d._2.map(t => (t, 1.0)))
     tokenizedDocuments
-      .flatMap { case (documentId, valueSet) => valueSet.map { token => (token, 1.0) } } // emit (token, 1)
+      .flatMap { case (documentId, valueSet, documentOriginalId) => valueSet.map { token => (token, 1.0) } } // emit (token, 1)
       .combineByKey(create, add, merge) // token count (~ word count)
       .sortBy(x => (x._2, x._1)) // sort token by count
       .zipWithIndex() // less frequent token will have lower index
@@ -72,15 +72,15 @@ object CommonJsFunctions {
     * @param tekenCount_broadcast
     * @return (documentID, sortedTokenIDs)
     */
-  def sortTokens(tokenizedDocuments: RDD[(Int, Set[String])],
-                 tekenCount_broadcast: Broadcast[scala.collection.Map[String, (Double, Int)]]): RDD[(Int, Array[Int])] = {
-    tokenizedDocuments.map { case (documentID, valueSet) =>
+  def sortTokens(tokenizedDocuments: RDD[(Int, Set[String], String)],
+                 tekenCount_broadcast: Broadcast[scala.collection.Map[String, (Double, Int)]]): RDD[(Int, Array[Int], String)] = {
+    tokenizedDocuments.map { case (documentID, valueSet, documentOriginalId) =>
       val sortedTokenIDs = valueSet.toArray.map {
         token =>
           val tokenCountId = tekenCount_broadcast.value(token)
           tokenCountId._2
       }.sorted // the id of the token are assigned from the least frequent to the most frequent
-      (documentID, sortedTokenIDs)
+      (documentID, sortedTokenIDs, documentOriginalId)
     }
   }
 

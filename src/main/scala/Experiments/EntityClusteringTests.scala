@@ -96,7 +96,7 @@ object EntityClusteringTests {
     }.filter(_._1 >= 0).collect().toSet
 
     /** Now we have the candidate pairs, we can create the edges for the clustering methods */
-    val edges = matches.map(x => WeightedEdge(x._1, x._2, x._3))
+    val edges = matches.map(x => WeightedEdge(x._1, x._2, x._5))
 
 
     /** Pick up one */

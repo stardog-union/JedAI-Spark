@@ -7,7 +7,7 @@ class PPJoinPrefixIndexPartitioner(numPart: Int) extends Partitioner {
 
   override def getPartition(key: Any): Int = {
     val part = load.indexOf(load.min)
-    val s = key.asInstanceOf[Array[(Long, Array[Long])]].length.toDouble
+    val s = key.asInstanceOf[Array[(Long, Array[Long], String)]].length.toDouble
     load.update(part, load(part) + (s * s - 1))
     part
   }
