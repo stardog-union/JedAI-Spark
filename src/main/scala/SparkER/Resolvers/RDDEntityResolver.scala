@@ -4,7 +4,7 @@ import SparkER.Wrappers.CSVWrapper.rowToAttributes
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
 
-class RDDEntityResolver {
+class RDDEntityResolver extends Serializable {
   val REAL_ID_FIELD = "iri"
   def getProfiles(dataset: Dataset[Row]): RDD[Profile] = {
     val columnNames = dataset.columns
@@ -14,8 +14,6 @@ class RDDEntityResolver {
       profile =>
         val profileID = profile._2.toInt + startIDFrom
         val attributes = profile._1
-        print(attributes)
-        attributes.foreach(kv => {println(kv.key)})
         val realID = {
             attributes.filter(_.key.toLowerCase() == REAL_ID_FIELD.toLowerCase()).map(_.value).mkString("").trim
         }
