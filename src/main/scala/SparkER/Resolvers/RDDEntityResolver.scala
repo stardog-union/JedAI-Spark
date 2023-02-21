@@ -5,8 +5,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
 
 class RDDEntityResolver extends Serializable {
-  val REAL_ID_FIELD = "iri"
-  def getProfiles(dataset: Dataset[Row]): RDD[Profile] = {
+
+  def getProfiles(dataset: Dataset[Row], realIDField: String): RDD[Profile] = {
     val columnNames = dataset.columns
     val startIDFrom = 0
 
@@ -15,9 +15,14 @@ class RDDEntityResolver extends Serializable {
         val profileID = profile._2.toInt + startIDFrom
         val attributes = profile._1
         val realID = {
-            attributes.filter(_.key.toLowerCase() == REAL_ID_FIELD.toLowerCase()).map(_.value).mkString("").trim
+          if (realIDField.isEmpty) {
+            ""
+          }
+          else {
+            attributes.filter(_.key.toLowerCase() == realIDField.toLowerCase()).map(_.value).mkString("").trim
+          }
         }
-        Profile(profileID, attributes.filter(kv => kv.key.toLowerCase() != REAL_ID_FIELD.toLowerCase()), realID, 0)
+        Profile(profileID, attributes.filter(kv => kv.key.toLowerCase() != realIDField.toLowerCase()), realID, 0)
     }
   }
 }
