@@ -93,7 +93,7 @@ object PPJoin {
   /**
     * Returns the pairs that pass both length and position filter
     **/
-  def getCandidatePairs(prefixIndex: RDD[(Int, Array[(Int, Array[Int])])], threshold: Double, separatorID: Int): RDD[((Int, Array[Int]), (Int, Array[Int]))] = {
+  def getCandidatePairs(prefixIndex: RDD[(Int, Array[(Int, Array[Int], String)])], threshold: Double, separatorID: Int): RDD[((Int, Array[Int], String), (Int, Array[Int], String))] = {
     /**
       * Repartitions the blocks of the index based on the number of maximum comparisons involved by each block
       */
@@ -102,12 +102,13 @@ object PPJoin {
 
     repartitionIndex.flatMap {
       case (docs, tokenId) =>
-        val results = scala.collection.mutable.Set[((Int, Array[Int]), (Int, Array[Int]))]()
+        val results = scala.collection.mutable.Set[((Int, Array[Int], String), (Int, Array[Int], String))]()
         var i = 0
         while (i < docs.length - 1) {
           var j = i + 1
           val doc1Id = docs(i)._1
           val doc1Tokens = docs(i)._2
+          val doc1OrigId = docs(i)._3
           val doc1PrefixLen = JsFilters.getPrefixLength(doc1Tokens.length, threshold)
 
           /** For each pair that passes the length filter */
@@ -115,6 +116,7 @@ object PPJoin {
             val doc2Id = docs(j)._1
             if (separatorID < 0 || ((doc1Id <= separatorID && doc2Id > separatorID) || (doc2Id <= separatorID && doc1Id > separatorID))) {
               val doc2Tokens = docs(j)._2
+              val doc2OrigId = docs(j)._3
               val doc2PrefixLen = JsFilters.getPrefixLength(doc2Tokens.length, threshold)
               /** Check if the current token is the last: needed to avoid duplicates */
               val (p1, p2, isLastCommon) = lastCommonTokenPosition(doc1Tokens, doc2Tokens, tokenId, doc1PrefixLen, doc2PrefixLen)
@@ -123,10 +125,10 @@ object PPJoin {
                 val common = getCommonElementsInPrefix(doc1Tokens, doc2Tokens, p1, p2) //Number of common elements in the prefix
                 if (JsFilters.positionFilter(doc1Tokens.length, doc2Tokens.length, p1 + 1, p2 + 1, common, threshold)) {
                   if (doc1Id < doc2Id) {
-                    results.add(((doc1Id, doc1Tokens), (doc2Id, doc2Tokens)))
+                    results.add(((doc1Id, doc1Tokens, doc1OrigId), (doc2Id, doc2Tokens, doc2OrigId)))
                   }
                   else {
-                    results.add(((doc2Id, doc2Tokens), (doc1Id, doc1Tokens)))
+                    results.add(((doc2Id, doc2Tokens, doc2OrigId), (doc1Id, doc1Tokens, doc1OrigId)))
                   }
                 }
               }
@@ -143,13 +145,13 @@ object PPJoin {
   /**
     * Generates the prefix index
     **/
-  def buildPrefixIndex(tokenizedDocOrd: RDD[(Int, Array[Int])], threshold: Double): RDD[(Int, Array[(Int, Array[Int])])] = {
+  def buildPrefixIndex(tokenizedDocOrd: RDD[(Int, Array[Int], String)], threshold: Double): RDD[(Int, Array[(Int, Array[Int], String)])] = {
     val indices = tokenizedDocOrd.flatMap {
-      case (docId, tokens) =>
+      case (docId, tokens, docOriginalId) =>
         val prefix = JsFilters.getPrefix(tokens, threshold)
         prefix.zipWithIndex.map {
           case (token, pos) =>
-            (token, (docId, tokens))
+            (token, (docId, tokens, docOriginalId))
         }
     }
 
@@ -159,7 +161,7 @@ object PPJoin {
   }
 
   /** Returns the pairs that can reach the threshold */
-  def getCandidates(tokenizedDocSort: RDD[(Int, Array[Int])], threshold: Double, separatorID: Int = -1): RDD[((Int, Array[Int]), (Int, Array[Int]))] = {
+  def getCandidates(tokenizedDocSort: RDD[(Int, Array[Int], String)], threshold: Double, separatorID: Int = -1): RDD[((Int, Array[Int], String), (Int, Array[Int], String))] = {
     val ts = Calendar.getInstance().getTimeInMillis
     val prefixIndex = buildPrefixIndex(tokenizedDocSort, threshold)
     prefixIndex.count()
@@ -184,15 +186,16 @@ object PPJoin {
   /**
     * Returns the pairs that have a similarity greater or equal the threshold
     **/
-  def getMatches(documents: RDD[(Int, String)], threshold: Double, separatorID: Int = -1): RDD[(Int, Int, Double)] = {
+  def getMatches(documents: RDD[(Int, String, String)], threshold: Double, separatorID: Int = -1): RDD[(Int, Int, String, String, Double)] = {
     val log = LogManager.getRootLogger
     val tokenizedDocSort = CommonJsFunctions.tokenizeAndSort(documents)
     val candidates = getCandidates(tokenizedDocSort, threshold, separatorID)
     val t1 = Calendar.getInstance().getTimeInMillis
     val matches = candidates
-        .map{case ((d1Id, d1Tokens), (d2Id, d2Tokens)) => ((d1Id, d1Tokens), (d2Id, d2Tokens), calcJS(d1Tokens, d2Tokens))}
-      .filter { case ((d1Id, d1Tokens), (d2Id, d2Tokens), js) => js >= threshold }
-      .map { case ((d1Id, d1Tokens), (d2Id, d2Tokens), js) => (d1Id, d2Id, js) }
+        .map{case ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId)) => ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId),
+          calcJS(d1Tokens, d2Tokens))}
+      .filter { case ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId), js) => js >= threshold }
+      .map { case ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId), js) => (d1Id, d2Id, d1OrigId, d2OrigId, js) }
     matches.cache()
     val nm = matches.count()
     val t2 = Calendar.getInstance().getTimeInMillis

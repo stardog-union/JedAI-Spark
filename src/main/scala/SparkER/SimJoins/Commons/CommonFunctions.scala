@@ -22,9 +22,9 @@ object CommonFunctions {
     * Given a RDD of profiles, returns all the values of the attributes as a single string
     * The values are lower cased and empty strings are removed
     * */
-  def extractAllFields(profiles: RDD[Profile]): RDD[(Int, String)] = {
+  def extractAllFields(profiles: RDD[Profile]): RDD[(Int, String, String)] = {
     profiles.map { profile =>
-      (profile.id, profile.attributes.map(_.value).mkString(" ").toLowerCase)
+      (profile.id, profile.attributes.map(_.value).mkString(" ").toLowerCase, profile.originalID)
     }.filter(!_._2.trim.isEmpty)
   }
 

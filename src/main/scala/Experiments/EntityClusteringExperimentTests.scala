@@ -73,7 +73,7 @@ object EntityClusteringExperimentTests {
     log.info("[PPJoin] Join+verification time (s) " + (t2 - t1) / 1000.0)
 
     /** Now we have the candidate pairs, we can create the edges for the clustering methods */
-    val edges = matches.map(x => WeightedEdge(x._1, x._2, x._3))
+    val edges = matches.map(x => WeightedEdge(x._1, x._2, x._5))
 
     /** Pick one algorithm (Same as EntityClusteringTests) */
     val cc1 = MarkovClustering.getClusters(profiles = profiles, edges, maxProfileId, edgesThreshold = 0.5, separatorID = -1)
