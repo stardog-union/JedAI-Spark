@@ -164,17 +164,14 @@ object PPJoin {
   def getCandidates(tokenizedDocSort: RDD[(Int, Array[Int], String)], threshold: Double, separatorID: Int = -1): RDD[((Int, Array[Int], String), (Int, Array[Int], String))] = {
     val ts = Calendar.getInstance().getTimeInMillis
     val prefixIndex = buildPrefixIndex(tokenizedDocSort, threshold)
-    prefixIndex.count()
     val log = LogManager.getRootLogger
     val te = Calendar.getInstance().getTimeInMillis
     log.info("[PPJOIN] PPJOIN index time (s) " + (te - ts) / 1000.0)
 
     val t1 = Calendar.getInstance().getTimeInMillis
     val candidates = getCandidatePairs(prefixIndex, threshold, separatorID)
-    val cn = candidates.count()
     val t2 = Calendar.getInstance().getTimeInMillis
     log.info("[PPJOIN] PPJOIN join time (s) " + (t2 - t1) / 1000.0)
-    log.info("[PPJOIN] Number of candidates " + cn)
     candidates
   }
 
@@ -197,10 +194,8 @@ object PPJoin {
       .filter { case ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId), js) => js >= threshold }
       .map { case ((d1Id, d1Tokens, d1OrigId), (d2Id, d2Tokens, d2OrigId), js) => (d1Id, d2Id, d1OrigId, d2OrigId, js) }
     matches.cache()
-    val nm = matches.count()
     val t2 = Calendar.getInstance().getTimeInMillis
     log.info("[PPJOIN] PPJOIN verify time (s) " + (t2 - t1) / 1000.0)
-    log.info("[PPJOIN] Number of matches " + nm)
     matches
   }
 }

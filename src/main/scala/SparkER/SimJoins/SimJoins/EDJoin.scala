@@ -132,7 +132,6 @@ object EDJoin {
     //Sorts the n-grams by their document frequency
     val sortedDocs = CommonEdFunctions.getSortedQgrams2(docs)
     sortedDocs.persist(StorageLevel.MEMORY_AND_DISK)
-    sortedDocs.count()
 
     val ts = Calendar.getInstance().getTimeInMillis
     val prefixIndex = buildPrefixIndex(sortedDocs, qgramLength, threshold)
@@ -158,10 +157,8 @@ object EDJoin {
 
     val t1 = Calendar.getInstance().getTimeInMillis
     val candidates = getCandidatePairs(prefixIndex, qgramLength, threshold)
-    val nc = candidates.count()
     prefixIndex.unpersist()
     val t2 = Calendar.getInstance().getTimeInMillis
-    log.info("[EDJoin] Candidates number " + nc)
     log.info("[EDJoin] EDJOIN join time (s) " + (t2 - t1) / 1000.0)
 
     candidates
@@ -185,9 +182,7 @@ object EDJoin {
       .filter { case ((d1Id, d1), (d2Id, d2)) => CommonEdFunctions.editDist(d1, d2) <= threshold }
       .map { case ((d1Id, d1), (d2Id, d2)) => (d1Id, d2Id) }
     m.persist(StorageLevel.MEMORY_AND_DISK)
-    val nm = m.count()
     val t3 = Calendar.getInstance().getTimeInMillis
-    log.info("[EDJoin] Num matches " + nm)
     log.info("[EDJoin] Verify time (s) " + (t3 - t2) / 1000.0)
     log.info("[EDJoin] Global time (s) " + (t3 - t1) / 1000.0)
     m
