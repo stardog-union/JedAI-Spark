@@ -57,7 +57,7 @@ jobs:
             mkdir /tmp/scalatests
             mkdir /tmp/artifacts
             find target/test-reports -type f -exec cp {} /tmp/scalatests/ \;
-            cp target/scala-2.12/spark_er-assembly-1.0.jar /tmp/artifacts
+            cp target/scala-2.12/*.jar /tmp/artifacts
       - store_test_results:
           path: /tmp/scalatests
       - store_artifacts:
