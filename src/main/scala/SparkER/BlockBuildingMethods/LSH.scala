@@ -193,9 +193,7 @@ object LSH {
     val t1 = Calendar.getInstance()
     log.info("SPARKER - Time to perform LSH " + (t1.getTimeInMillis - t0.getTimeInMillis) + " ms")
 
-    val numbuckets = attributesPerBucket.count()
     val t2 = Calendar.getInstance()
-    log.info("SPARKER - Number of buckets " + numbuckets)
     log.info("SPARKER - Time to calculate attributesPerBucket " + (t2.getTimeInMillis - t1.getTimeInMillis) + " ms")
 
     /** Generates the clusters of attributes (attributes that ended up in the same bucket) */
@@ -220,7 +218,6 @@ object LSH {
       }.map(x => (x.head, (x.last, calcSimilarity(attributeSignaturesBroadcast.value(x.head), attributeSignaturesBroadcast.value(x.last)))))
     }
 
-    edges.count()
     val t3 = Calendar.getInstance()
     log.info("SPARKER - Time to calculate edges " + (t3.getTimeInMillis - t2.getTimeInMillis) + " ms")
 
@@ -243,7 +240,6 @@ object LSH {
       (key1, keys2.filter(_._2 >= max).map(_._1))
     }
 
-    topEdges.count()
     val t4 = Calendar.getInstance()
     log.info("SPARKER - Time to calculate top edges " + (t4.getTimeInMillis - t3.getTimeInMillis) + " ms")
 

@@ -1,6 +1,6 @@
 organization := "com.stardog"
-name := "spark_er"
-version := "1.0"
+name := "spark-er"
+version := "1.0.0"
 scalaVersion := "2.12.4"
 val sparkVersion = "3.3.1"
 val jacksonVersion = "2.14.0"

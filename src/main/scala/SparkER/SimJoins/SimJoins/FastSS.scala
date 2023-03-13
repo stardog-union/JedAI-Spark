@@ -181,8 +181,6 @@ object FastSS {
     }
 
     matches.persist(StorageLevel.MEMORY_AND_DISK)
-    val nc = matches.count()
-    log.info("[FastSS] Num candidates  " + nc)
     val t3 = Calendar.getInstance().getTimeInMillis
     log.info("[FastSS] Candidates time (s) " + (t3 - t2) / 1000)
     blocksBrd.unpersist()
@@ -197,10 +195,8 @@ object FastSS {
     val t1 = Calendar.getInstance().getTimeInMillis
     val index = buildIndex(profiles, threshold)
     index.persist(StorageLevel.MEMORY_AND_DISK)
-    val ni = index.count()
     val t2 = Calendar.getInstance().getTimeInMillis
     val log = LogManager.getRootLogger
-    log.info("[FastSS] Num index " + ni)
     log.info("[FastSS] Index time (s) " + (t2 - t1) / 1000)
 
     val results = getIntMatches(index, threshold, profiles.map(_._1).max() + 1)

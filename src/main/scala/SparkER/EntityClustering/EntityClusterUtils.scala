@@ -42,12 +42,17 @@ object EntityClusterUtils {
       )
         .value
         .map(x => x._1.map(node => Map(node -> x._2)).reduce(_ ++ _))
-        .reduce(_ ++ _)
+        .reduceOption(_ ++ _)
 
-      weightedEdges
-        .map(we => (ccNodesBD(we.firstProfileID), Array(we)))
-        .reduceByKey(_ ++ _)
-        .map(x => x._2.map(we => (we.firstProfileID, we.secondProfileID, we.weight)).toIterable)
+      if (ccNodesBD.isDefined) {
+        weightedEdges
+          .map(we => (ccNodesBD.get(we.firstProfileID), Array(we)))
+          .reduceByKey(_ ++ _)
+          .map(x => x._2.map(we => (we.firstProfileID, we.secondProfileID, we.weight)).toIterable)
+      }
+      else {
+        throw new Exception("No matching edge found in the dataset")
+      }
     }
     else {
       val log = LogManager.getRootLogger
